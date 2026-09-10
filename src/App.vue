@@ -5,15 +5,19 @@
 
 import {onMounted, ref} from "vue";
 
+
 import  Database from "@tauri-apps/plugin-sql";
 
+import AppHader from "./components/AppHader.vue";
+
+import MessageList from "./components/MessageList.vue";
+
+import MessageComposer from "./components/MessageComposer.vue";
+
+import type {Message} from "./types/message";
+
 // строем структуру одного сообщения
-interface Message{
-  id: number;
-  author:string,
-  body:string,
-  created_at:string;
-}
+
 
 const draft = ref("");
 
@@ -34,11 +38,7 @@ async function loadMessages(){
   );
 }
 
-async function sendMessage() {
-  const body = draft.value.trim();
-
-  if (!body) return;
-
+async function sendMessage(body:string) {
   if (!db) return;
 
   // добавление нового соо в бд
@@ -56,7 +56,7 @@ async function sendMessage() {
     try {
       db = await Database.load("sqlite:messenger.db")
 
-      await  loadMessages()
+      await loadMessages()
 
       status.value = "история соо локальна"
     }catch (error){
@@ -72,23 +72,19 @@ async function sendMessage() {
 
 <template>
   <main class="app">
-    <header class="header">
-      <div>
-        <h1>
-          super messenger
-        </h1>
-        <p> {{status}}</p>
-      </div>
-      <span class="badge">
-        локально
-      </span>
-    </header>
+
+    <AppHader :status="status"/>
+
 
     <section class="chat">
       <div class="chat-info">
         <h2>первый чат</h2>
         <p> ваш 1 лок мессенджер</p>
       </div>
+
+      <MessageList :messages="messages"/>
+
+      <MessageComposer @send="sendMessage"/>
       <div class="messages">
         <div v-if="messages.length === 0"
         class="empty">
@@ -102,28 +98,11 @@ async function sendMessage() {
 
         </div>
 
-        <article v-for ="message in messages"
-        :key = "message.id"
-        class = "message">
-          <p>
-            {{message.body}}
-          </p>
 
-          <footer>
-            <span>{{message.created_at}}</span>
-          </footer>
-        </article>
       </div>
-      <form class="composer"
-      @submit.prevent ="sendMessage()">
-        <input
-            v-model="draft"
-            type="text"
-            placeholder="напишите соо"
-            autocomplete="off"
-        />
-        <button type="submit">отправить</button>
-      </form>
+      <MessageComposer
+          @submit.prevent ="sendMessage"
+      />
     </section>
   </main>
 </template>
@@ -158,24 +137,7 @@ async function sendMessage() {
   display: flex;
   flex-direction: column;
 }
-.header{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 24px;
-  border-bottom: blueviolet;
-}
 
-.header h1{
-  margin: 0;
-  font-size: 10px;
-}
-
-.header p{
-  margin: 4px 0 0;
-  font-size: 10px;
-  color: darkgreen;
-}
 
 .badge{
   padding: 6px 12px;
@@ -230,68 +192,7 @@ async function sendMessage() {
   color: hotpink;
 }
 
-.message{
-  align-self: flex-end;
-  max-width: 70%;
-  margin: 0;
-  padding: 10px 12px;
-  background: saddlebrown;
 
-}
 
-.message p{
-  margin: 0;
-  line-height: 1.45;
-  overflow-wrap: anywhere;
-}
 
-.message footer{
-  display: flex;
-  justify-content: flex-end;
-  gap: 5px;
-  margin-top: 6px;
-  color: lawngreen;
-  font-size: 10px;
-}
-
-.composer{
-  display: flex;
-  gap:10px;
-  padding: 16px 20px;
-  border-top: 1px solid #252830;
-  background: #22224e;
-}
-
-.composer input{
-  flex: 1;
-  min-width: 0;
-  padding: 12px 14px;
-  border: 1px solid #ffffff;
-  border-radius: 6px;
-  outline: none;
-  color: white;
-  background: #221313;
-  font: inherit;
-
-}
-
-.composer input:focus{
-  border-color: lightseagreen;
-}
-
-.composer button{
-  padding: 0 18px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  color: white;
-  background: lightseagreen;
-  font: inherit;
-  font-weight: 600;
-
-}
-
-.composer button:hover{
-  background: #238a6f;
-}
 </style>
