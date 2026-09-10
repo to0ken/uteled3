@@ -5,15 +5,24 @@ const emit = defineEmits<{
   send:[body:string]
 }>()
 const draft = ref("");
+const showPanel = ref(false)
+
+const quickWords = ["Привет", "Как дела?", "Спасибо"];
 
 function submitMessage(){
   const body = draft.value.trim();
-
   if(!body) return;
-
   emit("send", body);
-
   draft.value = "";
+}
+
+// добавить слова
+function addWord(word: string) {
+  if (draft.value.length > 0) {
+    draft.value += " ";
+  }
+  draft.value += word;
+
 }
 </script>
 
@@ -27,7 +36,21 @@ function submitMessage(){
         autocomplete="off"
     />
     <button type="submit">отправить</button>
+
+    <button class="panel-btn" @click="showPanel= !showPanel"></button>
   </form>
+
+  <div class="words-panel">
+    <button
+        v-for="(word, index) in quickWords"
+        :key="index"
+        type="button"
+        class="open-btn"
+        @click="addWord(word)"
+    >
+      {{ word }}
+    </button>
+  </div>
 </template>
 
 <style scoped>
