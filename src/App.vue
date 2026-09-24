@@ -3,6 +3,8 @@
 // onMounted - запускает код после отображения всех компанентов
 // ref - быстрая переменная
 
+// npm run tauri dev - запуск через кнс
+
 import {onMounted, ref} from "vue";
 
 
@@ -19,7 +21,7 @@ import type {Message} from "./types/message";
 // строем структуру одного сообщения
 
 
-const draft = ref("");
+
 
 const messages = ref<Message[]>([])
 
@@ -48,7 +50,6 @@ async function sendMessage(body:string) {
       ["вы", body]
   );
 
-  draft.value = "";
   await loadMessages();
 }
 
@@ -85,24 +86,10 @@ async function sendMessage(body:string) {
       <MessageList :messages="messages"/>
 
       <MessageComposer @send="sendMessage"/>
-      <div class="messages">
-        <div v-if="messages.length === 0"
-        class="empty">
 
 
-          <strong>
-            тут пусто
-          </strong>
-
-          <span>напишите первое соо</span>
-
-        </div>
 
 
-      </div>
-      <MessageComposer
-          @submit.prevent ="sendMessage"
-      />
     </section>
   </main>
 </template>
@@ -172,26 +159,6 @@ async function sendMessage(body:string) {
   color: orangered;
   font-size: 13px;
 }
-
-.messages{
-  flex:1;
-  overflow-y:auto ;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 24px
-;
-}
-
-.empty{
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  text-align: center;
-  color: hotpink;
-}
-
 
 
 
