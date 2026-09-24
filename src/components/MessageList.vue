@@ -1,60 +1,39 @@
 <script setup lang="ts">
-
-
-import type {Message} from "../types/message.ts";
+import type { Message } from "../types/message";
 import MessageBubble from "./MessageBubble.vue";
 
 defineProps<{
-  messages:Message[];
-}>()
+  messages: Message[];
+}>();
 </script>
 
 <template>
-  <main class="app">
+  <div class="messages">
+    <div v-if="messages.length === 0" class="empty">
+      <strong>тут пусто</strong>
+      <span>напишите первое сообщение</span>
+    </div>
 
 
-    <section class="chat">
-      <div class="chat-info">
-        <h2>первый чат</h2>
-        <p> ваш 1 лок мессенджер</p>
-      </div>
-      <div class="messages">
-        <div v-if="messages.length === 0"
-             class="empty">
-
-
-          <strong>
-            тут пусто
-          </strong>
-
-          <span>напишите первое соо</span>
-
-        </div>
-
-
-      </div>
-
-      <MessageBubble
+    <MessageBubble
         v-for="message in messages"
         :key="message.id"
         :message="message"
-      />
-    </section>
-  </main>
+    />
+  </div>
 </template>
 
 <style scoped>
-.messages{
-  flex:1;
-  overflow-y:auto ;
+.messages {
+  flex: 1;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 24px
-;
+  padding: 24px;
 }
 
-.empty{
+.empty {
   margin: auto;
   display: flex;
   flex-direction: column;
