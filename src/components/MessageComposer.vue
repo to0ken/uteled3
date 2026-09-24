@@ -1,97 +1,109 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import { ref } from "vue";
 
 const emit = defineEmits<{
-  send:[body:string]
-}>()
+  send: [body: string];
+}>();
+
 const draft = ref("");
-const showPanel = ref(false)
 
-const quickWords = ["Привет", "Как дела?", "Спасибо"];
+const emojis = ["😀", "😂", "❤️", "👍", "🔥", "😎", "🎉", "🤔"];
 
-function submitMessage(){
+function submitMessage() {
   const body = draft.value.trim();
-  if(!body) return;
+  if (!body) return;
   emit("send", body);
   draft.value = "";
 }
 
-// добавить слова
-function addWord(word: string) {
-  if (draft.value.length > 0) {
-    draft.value += " ";
-  }
-  draft.value += word;
-
+function addEmoji(emoji: string) {
+  draft.value += emoji;
 }
 </script>
 
 <template>
-  <form class="composer"
-        @submit.prevent ="submitMessage()">
+  <div class="emoji-panel">
+    <button
+        v-for="(emoji, index) in emojis"
+        :key="index"
+        type="button"
+        class="emoji-btn"
+        @click="addEmoji(emoji)"
+        :title="'Добавить ' + emoji"
+    >
+      {{ emoji }}
+    </button>
+  </div>
+
+
+  <form class="composer" @submit.prevent="submitMessage">
     <input
         v-model="draft"
         type="text"
-        placeholder="напишите соо"
+        placeholder="напишите сообщение"
         autocomplete="off"
     />
     <button type="submit">отправить</button>
-
-    <button class="panel-btn" @click="showPanel= !showPanel"></button>
   </form>
-
-  <div class="words-panel">
-    <button
-        v-for="(word, index) in quickWords"
-        :key="index"
-        type="button"
-        class="open-btn"
-        @click="addWord(word)"
-    >
-      {{ word }}
-    </button>
-  </div>
 </template>
 
 <style scoped>
-.composer{
+.emoji-panel {
   display: flex;
-  gap:10px;
-  padding: 16px 20px;
-  border-top: 1px solid #252830;
-  background: #22224e;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f5f5f5;
+  overflow-x: auto;
+  border-top: 1px solid #eee;
 }
 
-.composer input{
-  flex: 1;
-  min-width: 0;
-  padding: 12px 14px;
-  border: 1px solid #ffffff;
-  border-radius: 6px;
-  outline: none;
-  color: white;
-  background: #221313;
-  font: inherit;
-
-}
-
-.composer input:focus{
-  border-color: lightseagreen;
-}
-
-.composer button{
-  padding: 0 18px;
+.emoji-btn {
+  background: none;
   border: none;
-  border-radius: 8px;
+  font-size: 24px;
   cursor: pointer;
-  color: white;
-  background: lightseagreen;
-  font: inherit;
-  font-weight: 600;
-
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
 }
 
-.composer button:hover{
-  background: #238a6f;
+.emoji-btn:hover {
+  background: #e0e0e0;
+}
+
+.composer {
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+  border-top: 1px solid #ccc;
+  background: #fff;
+}
+
+.composer input {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  outline: none;
+  font-size: 16px;
+}
+
+.composer input:focus {
+  border-color: #007bff;
+}
+
+.composer button[type="submit"] {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  background: #007bff;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.composer button[type="submit"]:hover {
+  background: #0056b3;
 }
 </style>
